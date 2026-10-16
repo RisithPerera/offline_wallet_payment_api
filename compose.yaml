@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+#  api:
+
+  db:
+    container_name: main_db
+    image: postgres:18
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: main_database
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: apple123
+
+#  cache:
+#    image: redis
