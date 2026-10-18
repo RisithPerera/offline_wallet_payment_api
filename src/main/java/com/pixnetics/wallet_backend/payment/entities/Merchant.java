@@ -1,22 +1,24 @@
 package com.pixnetics.wallet_backend.payment.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.time.Instant;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "merchants")
 public class Merchant {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
-    private Instant createdAt;
+    @MapsId
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private User user;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -32,4 +34,7 @@ public class Merchant {
 
     @Column(name = "status", nullable = false)
     private String status;
+
+    @Column(name = "settle_type", nullable = false)
+    private String settleType;
 }

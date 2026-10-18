@@ -3,7 +3,7 @@ spring:
     name: wallet_backend
 
   datasource:
-    url: "jdbc:postgresql://localhost:26257/main_database"
+    url: "jdbc:postgresql://localhost:26257/main_database?currentSchema=payment_service"
     username: admin
     password: apple123
 

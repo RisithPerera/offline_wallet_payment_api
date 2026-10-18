@@ -1,29 +1,32 @@
-CREATE TABLE "clients" (
-    id            uuid        PRIMARY KEY,
+CREATE TABLE "users" (
+    id            uuid        PRIMARY KEY ,
     created_at    timestamptz NOT NULL DEFAULT now(),
+    type          text        NOT NULL,
     username      text        NOT NULL UNIQUE,
-    password_hash text        NOT NULL,
-    password_salt text        NOT NULL,
+    password_hash text        NOT NULL
+);
+
+CREATE TABLE "clients" (
+    id            uuid        PRIMARY KEY REFERENCES users (id),
     public_key    bytea       NOT NULL,
     key_status    text        NOT NULL,
     status        text        NOT NULL
 );
 
 CREATE TABLE "merchants" (
-    id           uuid        PRIMARY KEY,
-    created_at   timestamptz NOT NULL DEFAULT now(),
+    id           uuid        PRIMARY KEY REFERENCES users (id),
     name         text        NOT NULL,
     category     text,
     address      text,
     payout_iban  text,
-    status       text        NOT NULL
+    status       text        NOT NULL,
+    settle_type  text        NOT NULL
 );
 
 CREATE TABLE "wallets" (
     id           uuid          PRIMARY KEY,
     created_at   timestamptz   NOT NULL DEFAULT now(),
-    owner_type   text          NOT NULL,
-    owner_id     uuid          NOT NULL,
+    user_id      uuid          REFERENCES users (id),
     wallet_type  text          NOT NULL,
     name         text          NOT NULL,
     currency     text          NOT NULL DEFAULT 'EUR',
@@ -37,8 +40,8 @@ CREATE TABLE "transactions" (
     updated_at      timestamptz   NOT NULL DEFAULT now(),
     type            text          NOT NULL,
     status          text          NOT NULL DEFAULT 'pending',
-    from_wallet_id  uuid          REFERENCES wallet (id),
-    to_wallet_id    uuid          REFERENCES wallet (id),
+    from_wallet_id  uuid          REFERENCES wallets (id),
+    to_wallet_id    uuid          REFERENCES wallets (id),
     amount          numeric(10,2) NOT NULL,
     vat_rate        numeric(4,2)  NOT NULL DEFAULT 0,
     currency        text          NOT NULL DEFAULT 'EUR',
@@ -48,9 +51,9 @@ CREATE TABLE "transactions" (
 CREATE TABLE "ledger" (
     id          uuid          PRIMARY KEY,
     created_at  timestamptz   NOT NULL DEFAULT now(),
-    trans_id    uuid          NOT NULL REFERENCES transaction (id),
-    ref_id      uuid          REFERENCES transaction (id),
-    wallet_id   uuid          NOT NULL REFERENCES wallet (id),
+    trans_id    uuid          NOT NULL REFERENCES transactions (id),
+    ref_id      uuid          REFERENCES transactions (id),
+    wallet_id   uuid          NOT NULL REFERENCES wallets (id),
     amount      numeric(10,2) NOT NULL,
     vat         numeric(10,2) NOT NULL DEFAULT 0,
     vat_rate    numeric(4,2)  NOT NULL DEFAULT 0,

@@ -1,6 +1,5 @@
 package com.pixnetics.wallet_backend.payment.repositories;
 
-import com.pixnetics.wallet_backend.payment.entities.Client;
 import com.pixnetics.wallet_backend.payment.entities.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
