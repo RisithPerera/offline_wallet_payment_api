@@ -1,16 +1,18 @@
-CREATE TABLE users (
-    id          uuid        PRIMARY KEY DEFAULT uuidv7(),
-    created_at  timestamptz NOT NULL DEFAULT now(),
-    email       text        NOT NULL,
-    public_key  bytea       NOT NULL,
-    key_status  text        NOT NULL,
-    status      text        NOT NULL
+CREATE TABLE client (
+    id            uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at    timestamptz NOT NULL DEFAULT now(),
+    username      text        NOT NULL,
+    password_hash text        NOT NULL,
+    password_salt text        NOT NULL,
+    public_key    bytea       NOT NULL,
+    key_status    text        NOT NULL,
+    status        text        NOT NULL
 );
 
 CREATE TABLE merchant (
-    id           uuid        PRIMARY KEY DEFAULT uuidv7(),
+    id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at   timestamptz NOT NULL DEFAULT now(),
-    name         text        NOT NULL,
+    name         text        jjNOT NULL,
     category     text,
     address      text,
     payout_iban  text,
@@ -18,7 +20,7 @@ CREATE TABLE merchant (
 );
 
 CREATE TABLE wallet (
-    id           uuid          PRIMARY KEY DEFAULT uuidv7(),
+    id           uuid          PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at   timestamptz   NOT NULL DEFAULT now(),
     owner_type   text          NOT NULL,
     owner_id     uuid,
@@ -30,27 +32,27 @@ CREATE TABLE wallet (
 );
 
 CREATE TABLE transaction (
-    id              uuid          PRIMARY KEY DEFAULT uuidv7(),
+    id              uuid          PRIMARY KEY DEFAULT gen_random_uuid(),
     created_at      timestamptz   NOT NULL DEFAULT now(),
     updated_at      timestamptz   NOT NULL DEFAULT now(),
     type            text          NOT NULL,
     status          text          NOT NULL DEFAULT 'pending',
-    user_id         uuid          REFERENCES users (id),
+    user_id         uuid          REFERENCES client (id),
     from_wallet_id  uuid          REFERENCES wallet (id),
     to_wallet_id    uuid          REFERENCES wallet (id),
     amount          numeric(10,2) NOT NULL,
-    vat_rate        numeric(4,2)  NOT NULL DEFAULT,
-    currency        text          NOT NULL DEFAULT,
+    vat_rate        numeric(4,2)  NOT NULL DEFAULT 0,
+    currency        text          NOT NULL DEFAULT 0,
     failure_reason  text
 );
 
 CREATE TABLE ledger (
     created_at  timestamptz   NOT NULL DEFAULT now(),
-    id          uuid          PRIMARY KEY DEFAULT uuidv7(),
+    id          uuid          PRIMARY KEY DEFAULT gen_random_uuid(),
     trans_id    uuid          NOT NULL REFERENCES transaction (id),
     ref_id      uuid          REFERENCES transaction (id),
     wallet_id   uuid          NOT NULL REFERENCES wallet (id),
-    amount      numeric(10,2) NOT NULL
+    amount      numeric(10,2) NOT NULL,
     vat         numeric(10,2) NOT NULL DEFAULT 0,
     vat_rate    numeric(4,2)  NOT NULL DEFAULT 0,
     currency    text          NOT NULL DEFAULT 'EUR',
