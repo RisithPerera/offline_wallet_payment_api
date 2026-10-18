@@ -1,25 +1,50 @@
 package com.pixnetics.wallet_backend.payment.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.UUID;
+
 @Data
+@Entity
+@Table(name = "transactions")
 public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    private Instant createdAt;
+
+    @Column(name = "updated_at", nullable = false, insertable = false)
+    private Instant updatedAt;
+
+    @Column(name = "type", nullable = false)
     private String type;
-    private long userId;
-    private long fromWalletId;
-    private long toWalletId;
-    private double amount;
-    private String currency;
-    private double vatRate;
-    private String status;
+
+    @Column(name = "status", nullable = false)
+    private String status = "pending";
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "from_wallet_id", referencedColumnName = "id")
+    private Wallet fromWalletId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "to_wallet_id", referencedColumnName = "id")
+    private Wallet toWalletId;
+
+    @Column(name = "amount", nullable = false, precision = 10, scale = 2)
+    private BigDecimal amount;
+
+    @Column(name = "vat_rate", nullable = false, precision = 4, scale = 2)
+    private BigDecimal vatRate = BigDecimal.ZERO;
+
+    @Column(name = "currency", nullable = false)
+    private String currency = "EUR";
+
+    @Column(name = "failure_reason")
     private String failureReason;
 }

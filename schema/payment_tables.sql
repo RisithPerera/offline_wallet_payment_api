@@ -1,4 +1,4 @@
-CREATE TABLE "client" (
+CREATE TABLE "clients" (
     id            uuid        PRIMARY KEY,
     created_at    timestamptz NOT NULL DEFAULT now(),
     username      text        NOT NULL UNIQUE,
@@ -9,7 +9,7 @@ CREATE TABLE "client" (
     status        text        NOT NULL
 );
 
-CREATE TABLE "merchant" (
+CREATE TABLE "merchants" (
     id           uuid        PRIMARY KEY,
     created_at   timestamptz NOT NULL DEFAULT now(),
     name         text        NOT NULL,
@@ -19,11 +19,11 @@ CREATE TABLE "merchant" (
     status       text        NOT NULL
 );
 
-CREATE TABLE "wallet" (
+CREATE TABLE "wallets" (
     id           uuid          PRIMARY KEY,
     created_at   timestamptz   NOT NULL DEFAULT now(),
     owner_type   text          NOT NULL,
-    owner_id     uuid,
+    owner_id     uuid          NOT NULL,
     wallet_type  text          NOT NULL,
     name         text          NOT NULL,
     currency     text          NOT NULL DEFAULT 'EUR',
@@ -31,13 +31,12 @@ CREATE TABLE "wallet" (
     status       text          NOT NULL
 );
 
-CREATE TABLE "transaction" (
+CREATE TABLE "transactions" (
     id              uuid          PRIMARY KEY,
     created_at      timestamptz   NOT NULL DEFAULT now(),
     updated_at      timestamptz   NOT NULL DEFAULT now(),
     type            text          NOT NULL,
     status          text          NOT NULL DEFAULT 'pending',
-    user_id         uuid          REFERENCES client (id),
     from_wallet_id  uuid          REFERENCES wallet (id),
     to_wallet_id    uuid          REFERENCES wallet (id),
     amount          numeric(10,2) NOT NULL,
