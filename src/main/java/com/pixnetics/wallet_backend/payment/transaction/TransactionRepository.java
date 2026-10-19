@@ -1,6 +1,5 @@
-package com.pixnetics.wallet_backend.payment.repositories;
+package com.pixnetics.wallet_backend.payment.transaction;
 
-import com.pixnetics.wallet_backend.payment.entities.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

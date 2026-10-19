@@ -1,5 +1,6 @@
-package com.pixnetics.wallet_backend.payment.entities;
+package com.pixnetics.wallet_backend.payment.client;
 
+import com.pixnetics.wallet_backend.payment.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
