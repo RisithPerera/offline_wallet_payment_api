@@ -1,4 +1,4 @@
-package com.pixnetics.wallet_backend.payment.client.exception;
+package com.pixnetics.wallet_backend.payment.user.exception;
 
 public class UsernameAlreadyExistsException extends RuntimeException {
 

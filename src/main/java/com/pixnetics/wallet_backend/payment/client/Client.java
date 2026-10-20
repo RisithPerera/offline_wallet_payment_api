@@ -21,7 +21,7 @@ public class Client {
     @JoinColumn(name = "id")
     private User user;
 
-    @Column(name = "public_key", nullable = false)
+    @Column(name = "public_key", nullable = false, unique = true)
     private byte[] publicKey;
 
     @Column(name = "key_status", nullable = false)

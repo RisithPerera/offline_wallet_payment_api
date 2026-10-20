@@ -18,16 +18,15 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClientService {
-    private static final Logger log = LoggerFactory.getLogger(ClientService.class);
-
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
     public ClientResponse getById(UUID id) {
-        log.info("Creating a new client");
+        log.info("Getting a new client");
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException(id));
 
