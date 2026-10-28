@@ -8,7 +8,7 @@ CREATE TABLE "users" (
 
 CREATE TABLE "clients" (
     id            uuid        PRIMARY KEY REFERENCES users (id),
-    public_key    bytea       NOT NULL,
+    public_key    bytea       NOT NULL UNIQUE,
     key_status    text        NOT NULL,
     status        text        NOT NULL
 );
