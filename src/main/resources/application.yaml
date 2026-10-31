@@ -3,6 +3,9 @@ server:
   port: 8081
 
 spring:
+  flyway:
+    enabled: true
+
   application:
     name: wallet_backend
 
