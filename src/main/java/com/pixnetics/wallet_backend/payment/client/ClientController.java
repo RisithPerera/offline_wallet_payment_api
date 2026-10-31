@@ -5,6 +5,10 @@ import com.pixnetics.wallet_backend.payment.client.dto.ClientResponse;
 import com.pixnetics.wallet_backend.payment.wallet.WalletService;
 import com.pixnetics.wallet_backend.payment.wallet.dto.WalletCreationRequest;
 import com.pixnetics.wallet_backend.payment.wallet.dto.WalletResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +23,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/clients")
 @RequiredArgsConstructor
+@Tag(
+    name = "Client Actions",
+    description = "API endpoints for regular clients actions of the app"
+)
 public class ClientController {
 
     private final ClientService clientService;
@@ -37,6 +45,24 @@ public class ClientController {
     }
 
     @PostMapping
+    @Operation(
+            summary = "Create a client account",
+            description = """ 
+                        Registers a new client on the wallet platform.
+                        Check username already exists
+                        This creates a main wallet
+                        """
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Client successfully created"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid client information"
+            )
+    })
     public ResponseEntity<ClientResponse> createClient(@Valid @RequestBody ClientCreationRequest request) {
         log.info("Creating a new client");
 
