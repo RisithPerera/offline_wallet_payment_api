@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/")
 public class TransferController {
     private static final Logger log = LoggerFactory.getLogger(TransferController.class);
 
@@ -22,10 +22,7 @@ public class TransferController {
         return "withdraw done!";
     }
 
-    @PostMapping("/pay")
-    public String pay() {
-        return "Pay done!";
-    }
+
 
     @PostMapping("/settle")
     public String settle() {
