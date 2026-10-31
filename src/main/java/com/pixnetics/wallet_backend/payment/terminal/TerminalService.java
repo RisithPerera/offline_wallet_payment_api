@@ -1,18 +1,16 @@
 package com.pixnetics.wallet_backend.payment.terminal;
 
+import com.pixnetics.wallet_backend.payment.merchant.Merchant;
+import com.pixnetics.wallet_backend.payment.merchant.MerchantRepository;
+import com.pixnetics.wallet_backend.payment.merchant.exception.MerchantNotFoundException;
 import com.pixnetics.wallet_backend.payment.terminal.dto.TerminalCreationRequest;
 import com.pixnetics.wallet_backend.payment.terminal.dto.TerminalResponse;
 import com.pixnetics.wallet_backend.payment.terminal.exception.TerminalNotFoundException;
-import com.pixnetics.wallet_backend.payment.user.User;
-import com.pixnetics.wallet_backend.payment.user.UserRepository;
-import com.pixnetics.wallet_backend.payment.user.exception.UsernameAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Service
@@ -20,57 +18,39 @@ import java.util.UUID;
 @Slf4j
 public class TerminalService {
     private final TerminalRepository terminalRepository;
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final MerchantRepository merchantRepository;
 
     @Transactional(readOnly = true)
     public TerminalResponse getById(UUID id) {
-        log.info("Getting a new client");
-        Client client = terminalRepository.findById(id)
+        log.info("Getting terminal by ID: {}", id);
+        Terminal terminal = terminalRepository.findById(id)
                 .orElseThrow(() -> new TerminalNotFoundException(id));
 
-        return new TerminalResponse(
-                client.getId(),
-                client.getUser().getUsername()
-        );
+        return toResponse(terminal);
     }
 
-   /* @Transactional(readOnly = true)
-    public ClientResponse getByUsername(UUID id) {
-        log.info("Getting a new client");
-        Client client = clientRepository.findByU(id)
-                .orElseThrow(() -> new ClientNotFoundException(id));
-
-        return new ClientResponse(
-                client.getId(),
-                client.getUser().getUsername()
-        );
-    }
-*/
     @Transactional
-    public TerminalResponse create(TerminalCreationRequest request){
-        log.info("Creating a new client");
+    public TerminalResponse create(UUID merchantId, TerminalCreationRequest request) {
+        log.info("Creating terminal for merchant: {}", merchantId);
 
-        if(userRepository.existsByUsername(request.username())){
-            throw new UsernameAlreadyExistsException(request.username());
-        }
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new MerchantNotFoundException(merchantId));
 
-        User user = new User();
-        user.setType("CLIENT");
-        user.setUsername(request.username());
-        user.setPasswordHash(passwordEncoder.encode(request.password()));
+        Terminal terminal = new Terminal();
+        terminal.setMerchant(merchant);
+        terminal.setName(request.name());
+        terminal.setCertificateSerialNumber(request.certificateSerialNumber());
+        terminal.setStatus("ACTIVE");
 
-        Client client = new Client();
-        client.setUser(user);
-        client.setPublicKey(request.publicKey().getBytes(StandardCharsets.UTF_8));
-        client.setKeyStatus("OK");
-        client.setStatus("OK");
+        return toResponse(terminalRepository.save(terminal));
+    }
 
-        Client savedClient = terminalRepository.save(client);
-
+    private TerminalResponse toResponse(Terminal terminal) {
         return new TerminalResponse(
-                savedClient.getId(),
-                savedClient.getUser().getUsername()
+                terminal.getId(),
+                terminal.getName(),
+                terminal.getCertificateSerialNumber(),
+                terminal.getStatus()
         );
     }
 }

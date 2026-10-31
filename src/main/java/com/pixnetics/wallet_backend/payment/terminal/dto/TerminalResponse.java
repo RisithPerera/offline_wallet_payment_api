@@ -4,5 +4,7 @@ import java.util.UUID;
 
 public record TerminalResponse(
         UUID id,
-        String username
+        String name,
+        String certificateSerialNumber,
+        String status
 ) {}

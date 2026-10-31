@@ -25,15 +25,15 @@ public class Terminal {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "certificate_serial_number", nullable = false, unique = true)
+    @Column(name = "cert_serial_number", nullable = false, unique = true)
     private String certificateSerialNumber;
 
     @Column(name = "status", nullable = false)
     private String status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private Instant createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private Instant updatedAt;
 }

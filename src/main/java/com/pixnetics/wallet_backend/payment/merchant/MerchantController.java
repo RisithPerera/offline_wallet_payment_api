@@ -2,6 +2,9 @@ package com.pixnetics.wallet_backend.payment.merchant;
 
 import com.pixnetics.wallet_backend.payment.merchant.dto.MerchantCreationRequest;
 import com.pixnetics.wallet_backend.payment.merchant.dto.MerchantResponse;
+import com.pixnetics.wallet_backend.payment.terminal.TerminalService;
+import com.pixnetics.wallet_backend.payment.terminal.dto.TerminalCreationRequest;
+import com.pixnetics.wallet_backend.payment.terminal.dto.TerminalResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class MerchantController {
 
     private final MerchantService merchantService;
+    private final TerminalService terminalService;
 
     @GetMapping("/{id}")
     public ResponseEntity<MerchantResponse> getById(@PathVariable UUID id) {
@@ -34,7 +38,23 @@ public class MerchantController {
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path("/api/v1/clients/{id}")
+                .path("/api/v1/merchants/{id}")
+                .buildAndExpand(response.id())
+                .toUri();
+
+        return ResponseEntity.created(location).body(response);
+    }
+
+    @PostMapping("/{merchantId}/terminals")
+    public ResponseEntity<TerminalResponse> create(@PathVariable UUID merchantId,
+                                                   @RequestBody @Valid TerminalCreationRequest request) {
+        log.info("Creating a new terminal");
+
+        TerminalResponse response = terminalService.create(merchantId, request);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/v1/terminals/{id}")
                 .buildAndExpand(response.id())
                 .toUri();
 
