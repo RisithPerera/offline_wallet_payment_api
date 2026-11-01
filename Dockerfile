@@ -16,6 +16,18 @@ RUN chmod +x mvnw &&\
 # Copy source code
 COPY src/ src/
 
+# Package application (tests already run in CI)
+RUN ./mvnw clean package -DskipTests
+
+
+# Stage 2: Build the runtime image with JRE
+FROM eclipse-temurin:21-jre-alpine AS runtime
+
+WORKDIR /service
+
+# Copy only the executable JAR from the builder
+COPY --from=builder /service/target/*.jar app.jar
+
 # Expose the port (Spring default is 8080)
 EXPOSE 8080
 
