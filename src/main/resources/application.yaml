@@ -1,6 +1,6 @@
 server:
-  address: localhost
-  port: 8081
+  address: 0.0.0.0
+  port: 8080
 
 spring:
   flyway:
@@ -10,7 +10,7 @@ spring:
     name: wallet_backend
 
   datasource:
-    url: "jdbc:postgresql://localhost:26257/main_database?currentSchema=payment_service"
+    url: "jdbc:postgresql://db:26257/main_database?currentSchema=payment_service"
     username: admin
     password: apple123
 
@@ -34,7 +34,10 @@ logging:
 
 springdoc:
   api-docs:
-    enabled: false
+    enabled: true
+  swagger-ui:
+    operations-sorter: method
+    tags-sorter: alpha
 
 scalar:
   path: /doc

@@ -1,18 +1,29 @@
 version: "3.9"
 
 services:
-#  api:
+  payment:
+    container_name: payment_service
+    build: .
+    ports:
+      - "${SERVICE_PORT}:8080"
 
   db:
     container_name: main_db
-    image: postgres:18
+    image: cockroachdb/cockroach:latest-v26.2
     restart: unless-stopped
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_DB: main_database
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: apple123
+    command: start-single-node --insecure
 
-#  cache:
-#    image: redis
+    ports:
+      - "${COCKROACH_DB}:26257"
+      - "${COCKROACH_DB_UI}:8080"
+
+    volumes:
+      - ./cockroach-data:/cockroach/cockroach-data
+
+    environment:
+      COCKROACH_DATABASE: main_database
+      COCKROACH_USER: admin
+      COCKROACH_PASSWORD: apple123
+
+  #  cache:
+  #    image: redis
