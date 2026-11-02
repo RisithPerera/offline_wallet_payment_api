@@ -6,6 +6,7 @@ import com.pixnetics.wallet_backend.payment.wallet.WalletService;
 import com.pixnetics.wallet_backend.payment.wallet.dto.WalletCreationRequest;
 import com.pixnetics.wallet_backend.payment.wallet.dto.WalletResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +25,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/clients")
 @RequiredArgsConstructor
 @Tag(
-    name = "Client Actions",
+    name = "Client Management",
     description = "API endpoints for regular clients actions of the app"
 )
 public class ClientController {
@@ -38,10 +39,10 @@ public class ClientController {
         return ResponseEntity.ok(clientService.getById(id));
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<ClientResponse> getByUsername(@PathVariable UUID username) {
+    @GetMapping()
+    public ResponseEntity<ClientResponse> getByUsername(@RequestParam String username) {
         log.info("Get Client by username: {}", username);
-        return ResponseEntity.ok(clientService.getById(username));
+        return ResponseEntity.ok(clientService.getByUsername(username));
     }
 
     @PostMapping
@@ -49,8 +50,8 @@ public class ClientController {
             summary = "Create a client account",
             description = """ 
                         Registers a new client on the wallet platform.
-                        Check username already exists
-                        This creates a main wallet
+                        Check username already exists.
+                        This creates a main wallet.
                         """
     )
     @ApiResponses({
@@ -63,8 +64,13 @@ public class ClientController {
                     description = "Invalid client information"
             )
     })
-    public ResponseEntity<ClientResponse> createClient(@Valid @RequestBody ClientCreationRequest request) {
-        log.info("Creating a new client");
+    public ResponseEntity<ClientResponse> createClient(
+            @Parameter(
+                    description = "Unique identifier of the merchant",
+                    required = true
+            )
+            @Valid @RequestBody ClientCreationRequest request) {
+        log.info("Request received for Creating a new client");
 
         ClientResponse response = clientService.create(request);
 
@@ -78,8 +84,9 @@ public class ClientController {
     }
 
     @PostMapping("/{id}/wallet")
-    public ResponseEntity<WalletResponse> createWallet(@PathVariable UUID id,
-                                                 @Valid @RequestBody WalletCreationRequest request) {
+    public ResponseEntity<WalletResponse> createWallet(
+                                                    @PathVariable UUID id,
+                                                    @Valid @RequestBody WalletCreationRequest request) {
         log.info("Creating a new wallet");
         WalletResponse response = walletService.create(id, request);
 

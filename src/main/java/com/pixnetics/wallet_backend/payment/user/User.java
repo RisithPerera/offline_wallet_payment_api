@@ -1,10 +1,12 @@
 package com.pixnetics.wallet_backend.payment.user;
 
+import com.pixnetics.wallet_backend.payment.wallet.Wallet;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -28,4 +30,8 @@ public class User {
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @OneToMany
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private List<Wallet> wallets;
 }
