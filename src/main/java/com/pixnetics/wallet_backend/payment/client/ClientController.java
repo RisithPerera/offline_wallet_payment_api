@@ -99,6 +99,18 @@ public class ClientController {
         return ResponseEntity.created(location).body(response);
     }
 
+    @PostMapping("/topup")
+    public String topup() {
+        log.info("Doing topup");
+        return "topup done!";
+    }
+
+    @PostMapping("/withdraw")
+    public String withdraw() {
+        return "withdraw done!";
+    }
+
+
     @GetMapping("/details")
     public String getDetails() {
         log.info("Creating a new client");

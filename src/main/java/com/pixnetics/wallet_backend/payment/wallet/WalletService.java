@@ -6,7 +6,6 @@ import com.pixnetics.wallet_backend.payment.user.UserRepository;
 import com.pixnetics.wallet_backend.payment.wallet.dto.WalletCreationRequest;
 import com.pixnetics.wallet_backend.payment.wallet.dto.WalletResponse;
 import com.pixnetics.wallet_backend.payment.wallet.exception.WalletAlreadyExistsException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,8 +61,7 @@ public class WalletService {
                 .toList();
     }
 
-
-    private WalletResponse toResponse(Wallet wallet) {
+    public WalletResponse toResponse(Wallet wallet) {
         return new WalletResponse(
                 wallet.getId(),
                 wallet.getName(),

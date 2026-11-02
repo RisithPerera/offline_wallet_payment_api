@@ -19,9 +19,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
+@Service
 public class ClientService {
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
@@ -31,36 +31,45 @@ public class ClientService {
     @Transactional(readOnly = true)
     public ClientResponse getById(UUID id) {
         log.info("Getting a new client");
+
         Client client = clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException(id));
 
+        List<WalletResponse> wallets = client.getUser().getWallets().stream()
+                .map(walletService::toResponse)
+                .toList();
+
         return new ClientResponse(
-                client.getId(),
-                client.getUser().getUsername(),
-                walletService.getWalletsByUserId(client.getId())
+            client.getId(),
+            client.getUser().getUsername(),
+            wallets
         );
     }
 
-   /* @Transactional(readOnly = true)
-    public ClientResponse getByUsername(UUID id) {
+    @Transactional(readOnly = true)
+    public ClientResponse getByUsername(String username) {
         log.info("Getting a new client");
-        Client client = clientRepository.findByU(id)
-                .orElseThrow(() -> new ClientNotFoundException(id));
+
+        User client = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ClientNotFoundException(username));
+
+        List<WalletResponse> wallets = client.getWallets().stream()
+                .map(walletService::toResponse)
+                .toList();
 
         return new ClientResponse(
                 client.getId(),
-                client.getUser().getUsername()
+                client.getUsername(),
+                wallets
         );
     }
-*/
 
     @Transactional
     public ClientResponse create(ClientCreationRequest request){
-        log.info("Creating a new client");
-
         if(userRepository.existsByUsername(request.username())){
             throw new UsernameAlreadyExistsException(request.username());
         }
+        log.info("Username is not exists check passed");
 
         User user = new User();
         user.setType("CLIENT");
@@ -74,10 +83,12 @@ public class ClientService {
         client.setStatus("OK");
 
         Client savedClient = clientRepository.save(client);
+        log.info("Client record created");
 
         WalletCreationRequest initialWalletRequest = new WalletCreationRequest("MAIN", "Main", "EUR");
 
         WalletResponse initialWallet = walletService.create(savedClient.getUser(), initialWalletRequest);
+        log.info("Client main wallet created");
 
         return new ClientResponse(
                 savedClient.getId(),

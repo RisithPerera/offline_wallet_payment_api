@@ -60,4 +60,9 @@ public class MerchantController {
 
         return ResponseEntity.created(location).body(response);
     }
+
+    @PostMapping("/settle")
+    public String settle() {
+        return "settle done!";
+    }
 }

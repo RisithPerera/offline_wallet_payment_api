@@ -5,6 +5,10 @@ import java.util.UUID;
 public class ClientNotFoundException extends RuntimeException {
 
     public ClientNotFoundException(UUID id) {
-        super("Client with id " + id + " was not found");
+        super("Client with id: " + id + " was not found");
+    }
+
+    public ClientNotFoundException(String username) {
+        super("Client with username: " + username + " was not found");
     }
 }
