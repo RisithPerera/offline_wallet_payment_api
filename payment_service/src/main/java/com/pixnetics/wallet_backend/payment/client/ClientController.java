@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class ClientController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ClientResponse> getById(@PathVariable UUID id) {
-        log.info("Get Client by ID: {}", id);
+        log.info("Get Client by ID: {} Risith 2", id);
         return ResponseEntity.ok(clientService.getById(id));
     }
 
@@ -48,28 +49,15 @@ public class ClientController {
     @PostMapping
     @Operation(
             summary = "Create a client account",
-            description = """ 
-                        Registers a new client on the wallet platform.
-                        Check username already exists.
-                        This creates a main wallet.
+            description = """
+                        Registers a new client account on the wallet platform.
+                
+                        - The username must be unique.
+                        - A main wallet is automatically created for the client.
                         """
     )
-    @ApiResponses({
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Client successfully created"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid client information"
-            )
-    })
-    public ResponseEntity<ClientResponse> createClient(
-            @Parameter(
-                    description = "Unique identifier of the merchant",
-                    required = true
-            )
-            @Valid @RequestBody ClientCreationRequest request) {
+    @ApiResponse(responseCode = "201", description = "Client successfully created")
+    public ResponseEntity<ClientResponse> createClient(@Valid @RequestBody ClientCreationRequest request) {
         log.info("Request received for Creating a new client");
 
         ClientResponse response = clientService.create(request);

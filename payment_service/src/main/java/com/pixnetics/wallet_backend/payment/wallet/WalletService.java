@@ -66,7 +66,7 @@ public class WalletService {
                 wallet.getId(),
                 wallet.getName(),
                 wallet.getWalletType(),
-                wallet.getBalance().doubleValue(),
+                wallet.getBalance(),
                 wallet.getCurrency()
         );
     }
